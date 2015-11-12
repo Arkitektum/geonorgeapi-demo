@@ -10,7 +10,8 @@ namespace GeonorgeAPI.Demo.Console
 
         public static void Main(string[] args)
         {
-            SearchForServices();
+            //SearchForServices();
+            SearchForServicesFromKartverket();
         }
 
         private static void SearchForServices()
@@ -31,13 +32,13 @@ namespace GeonorgeAPI.Demo.Console
 
             SearchResultsType searchResults = _api.SearchWithFilters(searchFilter, searchFilterNames);
             List<CswMetadataEntry> metadataEntries = ParseSearchResults(searchResults);
-            
+
             metadataEntries.ForEach(System.Console.WriteLine);
         }
 
         private static List<CswMetadataEntry> ParseSearchResults(SearchResultsType results)
         {
-            List<CswMetadataEntry> metadatEntries = new List<CswMetadataEntry>();   
+            List<CswMetadataEntry> metadatEntries = new List<CswMetadataEntry>();
             if (results.Items != null)
             {
                 foreach (var item in results.Items)
@@ -64,6 +65,43 @@ namespace GeonorgeAPI.Demo.Console
                 }
             }
             return metadatEntries;
+        }
+
+        private static void SearchForServicesFromKartverket()
+        {
+            var searchFilter = new object[]
+            {
+                new BinaryLogicOpType()
+                        {
+                            Items = new object[]
+                                {
+                                    new PropertyIsLikeType
+                                    {
+                                        PropertyName = new PropertyNameType {Text = new[] {"OrganisationName"}},
+                                        Literal = new LiteralType {Text = new[] { "Kartverket" }}
+                                    },
+                                    new PropertyIsLikeType
+                                    {
+                                        PropertyName = new PropertyNameType {Text = new[] {"Type"}},
+                                        Literal = new LiteralType {Text = new[] { "service" }}
+                                    }
+                                },
+                                ItemsElementName = new ItemsChoiceType22[]
+                                    {
+                                        ItemsChoiceType22.PropertyIsLike, ItemsChoiceType22.PropertyIsLike,
+                                    }
+                        },
+            };
+
+            var searchFilterNames = new ItemsChoiceType23[]
+                {
+                    ItemsChoiceType23.And
+                };
+
+            SearchResultsType searchResults = _api.SearchWithFilters(searchFilter, searchFilterNames);
+            List<CswMetadataEntry> metadataEntries = ParseSearchResults(searchResults);
+
+            metadataEntries.ForEach(System.Console.WriteLine);
         }
     }
 }
