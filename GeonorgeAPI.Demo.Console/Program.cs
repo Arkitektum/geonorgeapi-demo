@@ -53,7 +53,11 @@ namespace GeonorgeAPI.Demo.Console
                         if (name == ItemsChoiceType24.title)
                             metadataEntry.Title = value;
                         else if (name == ItemsChoiceType24.URI && value != null && value.StartsWith("http"))
+                        {
                             metadataEntry.Uri = value;
+                            metadataEntry.Protocol = ((SimpleUriLiteral)record.Items[i]).protocol;
+                        }
+                            
                         else if (name == ItemsChoiceType24.identifier)
                             metadataEntry.Uuid = value;
                         else if (name == ItemsChoiceType24.creator)
